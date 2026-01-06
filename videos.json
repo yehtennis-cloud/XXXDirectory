@@ -1,21 +1,18 @@
 [
   {
     "id": 1,
-    "title": "Small Penis Humiliation Handjob and Dirty Cuck Talk",
-    "url": "https://www.pornhub.com/view_video.php?viewkey=ph63cf807c5d764",
-    "tags": ["Humiliation", "handjob", "visible-face", "tattoos", "tits-out", "dirty-talk"]
+    "title": "Introduction to Cardiac Physiology",
+    "url": "https://www.youtube.com/watch?v=example1",
+    "thumbnail": "https://img.youtube.com/vi/example1/hqdefault.jpg",
+    "date": "2024-01-15",
+    "tags": ["cardiology", "physiology", "beginner"]
   },
   {
     "id": 2,
     "title": "Advanced ECG Interpretation",
     "url": "https://www.youtube.com/watch?v=example2",
+    "thumbnail": "https://img.youtube.com/vi/example2/hqdefault.jpg",
+    "date": "2024-03-02",
     "tags": ["cardiology", "ECG", "advanced"]
   }
 ]
-
-{
-  "id": 3,
-  "title": "Pulmonary Hypertension Overview",
-  "url": "https://www.youtube.com/watch?v=example3",
-  "tags": ["pulmonology", "cardiology", "lecture"]
-}
