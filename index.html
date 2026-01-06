@@ -9,10 +9,29 @@
 
 <h1>Video Library</h1>
 
-<div id="tag-container"></div>
+<input type="text" id="searchInput" placeholder="Search videos..." />
+
+<select id="sortSelect">
+  <option value="newest">Newest</option>
+  <option value="alphabetical">Alphabetical</option>
+</select>
+
+<label>
+  <input type="radio" name="mode" value="AND" checked> AND
+</label>
+<label>
+  <input type="radio" name="mode" value="OR"> OR
+</label>
+
 <hr>
+
+<div id="tag-container"></div>
+
+<hr>
+
 <div id="video-container"></div>
 
 <script src="script.js"></script>
 </body>
+
 </html>
