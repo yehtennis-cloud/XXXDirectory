@@ -1,16 +1,32 @@
+const supabase = supabaseJs.createClient(
+  https://vrzpvslxmjzzqsfqqfqh.supabase.co,
+  sb_publishable_VndS3-F7PgktYmmYjbgfSQ_xHhr4oMx
+);
+
+
 let allVideos = [];
 let selectedTags = {};
 let currentPage = 1;
 const pageSize = 5;
 
-fetch("videos.json")
-  .then(r => r.json())
-  .then(data => {
-    allVideos = data;
-    restoreFromURL();
-    renderTags();
-    applyFilters();
-  });
+async function loadVideos() {
+  const { data, error } = await supabase
+    .from("videos")
+    .select("*");
+
+  if (error) {
+    alert("Error loading videos");
+    return;
+  }
+
+  allVideos = data;
+  renderTags();
+  restoreFromURL();
+  applyFilters();
+}
+
+loadVideos();
+
 
 document.getElementById("searchInput").oninput = applyFilters;
 document.getElementById("sortSelect").onchange = applyFilters;
@@ -161,20 +177,30 @@ function restoreFromURL() {
   });
 }
 
-function addVideo() {
+async function addVideo() {
   try {
-    const video = {
-      id: Date.now(),
+    const submission = {
       title: newTitle.value,
       url: newUrl.value,
       thumbnail: newThumbnail.value,
       date: newDate.value,
       tags: JSON.parse(newTags.value)
     };
-    allVideos.push(video);
-    renderTags();
-    applyFilters();
+
+    const { error } = await supabase
+      .from("submissions")
+      .insert(submission);
+
+    if (error) throw error;
+
+    alert("Submission received and awaiting approval.");
+    newTitle.value = "";
+    newUrl.value = "";
+    newThumbnail.value = "";
+    newDate.value = "";
+    newTags.value = "";
+
   } catch {
-    alert("Invalid tag JSON");
+    alert("Invalid data or JSON");
   }
 }
