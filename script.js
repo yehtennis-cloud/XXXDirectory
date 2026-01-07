@@ -183,24 +183,50 @@ function restoreFromURL() {
 }
 
 // ---------------- Public video submission ----------------
+// ---------------- Public video submission with detailed logging ----------------
 async function addVideo() {
   try {
-    if(!newTitle.value || !newUrl.value) {
-      return alert("Title and URL are required");
+    // Basic required fields check
+    if (!newTitle.value || !newUrl.value) {
+      return alert("Title and URL are required.");
+    }
+
+    // Validate tags JSON
+    let parsedTags = {};
+    if (newTags.value.trim() !== "") {
+      try {
+        parsedTags = JSON.parse(newTags.value);
+        if (typeof parsedTags !== "object" || Array.isArray(parsedTags)) {
+          throw new Error("Tags must be a JSON object with arrays of strings as values.");
+        }
+      } catch (jsonErr) {
+        console.error("JSON parse error:", jsonErr);
+        return alert("Invalid Tags JSON. Make sure it's an object, e.g. {\"Category\":[\"tag1\",\"tag2\"]}");
+      }
     }
 
     const submission = {
       title: newTitle.value,
       url: newUrl.value,
-      thumbnail: newThumbnail.value,
-      date: newDate.value || new Date().toISOString().slice(0,10),
-      tags: newTags.value ? JSON.parse(newTags.value) : {}
+      thumbnail: newThumbnail.value || null,
+      date: newDate.value || new Date().toISOString().slice(0, 10),
+      tags: parsedTags
     };
 
-    const { error } = await supabase.from("submissions").insert(submission);
-    if (error) throw error;
+    // Log what we're about to insert
+    console.log("Attempting to insert submission:", submission);
 
-    // Clear form
+    // Insert into Supabase
+    const { data, error } = await supabase.from("submissions").insert(submission).select();
+
+    if (error) {
+      console.error("Supabase insert error:", error);
+      return alert("Error submitting video: " + error.message);
+    }
+
+    console.log("Submission succeeded:", data);
+
+    // Clear form after successful submission
     newTitle.value = "";
     newUrl.value = "";
     newThumbnail.value = "";
@@ -209,10 +235,11 @@ async function addVideo() {
 
     alert("Submission received! Awaiting admin approval. Email alert will be sent automatically.");
   } catch (err) {
-    console.error(err);
-    alert("Error: Could not submit. Check your tag JSON.");
+    console.error("Unexpected error in addVideo():", err);
+    alert("Unexpected error: " + err.message);
   }
 }
+
 
 // ---------------- Admin login & panel ----------------
 async function login() {
