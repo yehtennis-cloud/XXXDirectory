@@ -19,3 +19,11 @@ body {
 .video {
   margin-bottom: 15px;
 }
+img {
+  margin-bottom: 6px;
+}
+
+input, select {
+  margin-right: 10px;
+  padding: 5px;
+}
