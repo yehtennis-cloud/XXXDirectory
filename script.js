@@ -1,7 +1,7 @@
 // ---------------- Supabase Init ----------------
 const supabase = supabaseJs.createClient(
-  "https://YOUR_PROJECT_ID.supabase.co",
-  "YOUR_PUBLIC_ANON_KEY"
+  "https://vrzpvslxmjzzqsfqqfqh.supabase.co",
+  "sb_publishable_VndS3-F7PgktYmmYjbgfSQ_xHhr4oMx"
 );
 
 // ---------------- Global Variables ----------------
