@@ -3,62 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <title>Video Library</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://vrzpvslxmjzzqsfqqfqh.supabase.co"></script>
-
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .video { margin-bottom: 20px; }
+    .tag { display:inline-block; padding:5px; margin:2px; background:#e0e0e0; cursor:pointer; }
+    .tag.selected { background:#a0a0a0; }
+    #admin-panel { border: 1px solid #ccc; padding: 10px; margin-top:20px; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
 <h1>Video Library</h1>
 
+<!-- Search / Filter -->
 <input type="text" id="searchInput" placeholder="Search videos...">
-
 <select id="sortSelect">
   <option value="newest">Newest</option>
   <option value="alphabetical">Alphabetical</option>
 </select>
-
 <label><input type="radio" name="mode" value="AND" checked> AND</label>
 <label><input type="radio" name="mode" value="OR"> OR</label>
-
 <button id="clearBtn">Clear Filters</button>
-
 <hr>
 
 <div id="tag-container"></div>
-
 <hr>
-
 <div id="video-container"></div>
-
 <div id="pagination"></div>
+<hr>
+
+<!-- Public submission form -->
+<h2>Submit a Video for Review</h2>
+<div id="add-video-form">
+  <input id="newTitle" placeholder="Title"><br>
+  <input id="newUrl" placeholder="Video URL"><br>
+  <input id="newThumbnail" placeholder="Thumbnail URL"><br>
+  <input id="newDate" placeholder="YYYY-MM-DD"><br>
+  <textarea id="newTags" placeholder='Tags JSON e.g. {"topic":["cardiology"],"level":["beginner"]}'></textarea><br>
+  <button id="addVideoBtn">Add Video</button>
+</div>
 
 <hr>
 
-<h2>Submit a Video for Review</h2>
-<input id="newTitle" placeholder="Title"><br>
-<input id="newUrl" placeholder="Video URL"><br>
-<input id="newThumbnail" placeholder="Thumbnail URL"><br>
-<input id="newDate" placeholder="YYYY-MM-DD"><br>
-<textarea id="newTags" placeholder='Tags JSON (see example)'></textarea><br>
-<button id="addVideoBtn">Add Video</button>
-
-<script src="script.js"></script>
-  <hr>
-
+<!-- Admin login -->
 <div id="admin-login">
   <h2>Admin Login</h2>
-  <input id="adminEmail" placeholder="Email">
-  <input id="adminPassword" type="password" placeholder="Password">
+  <input id="adminEmail" placeholder="Email"><br>
+  <input id="adminPassword" type="password" placeholder="Password"><br>
   <button onclick="login()">Login</button>
 </div>
 
+<!-- Admin panel -->
 <div id="admin-panel" style="display:none;">
   <h2>Pending Submissions</h2>
   <div id="submission-list"></div>
 </div>
 
+<script src="script.js"></script>
 </body>
-
-
 </html>
