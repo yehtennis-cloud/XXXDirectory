@@ -4,6 +4,24 @@ const supabase = supabaseJs.createClient(
   "sb_publishable_VndS3-F7PgktYmmYjbgfSQ_xHhr4oMx"
 );
 
+// ---------------- Element References ----------------
+const video_container = document.getElementById("video-container");
+const pagination = document.getElementById("pagination");
+const searchInput = document.getElementById("searchInput");
+const sortSelect = document.getElementById("sortSelect");
+const submission_list = document.getElementById("submission-list");
+
+const newTitle = document.getElementById("newTitle");
+const newUrl = document.getElementById("newUrl");
+const newThumbnail = document.getElementById("newThumbnail");
+const newDate = document.getElementById("newDate");
+const newTags = document.getElementById("newTags");
+
+const adminEmail = document.getElementById("adminEmail");
+const adminPassword = document.getElementById("adminPassword");
+const adminLogin = document.getElementById("admin-login");
+const adminPanel = document.getElementById("admin-panel");
+
 // ---------------- Global Variables ----------------
 let allVideos = [];
 let selectedTags = {};
@@ -16,7 +34,7 @@ async function loadVideos() {
     .from("videos")
     .select("*");
 
-  if (error) return alert("Error loading videos");
+  if (error) return console.error("Error loading videos:", error);
   allVideos = data;
   renderTags();
   restoreFromURL();
@@ -24,8 +42,8 @@ async function loadVideos() {
 }
 
 // ---------------- Event Listeners ----------------
-document.getElementById("searchInput").oninput = applyFilters;
-document.getElementById("sortSelect").onchange = applyFilters;
+searchInput.oninput = applyFilters;
+sortSelect.onchange = applyFilters;
 document.getElementsByName("mode").forEach(r => r.onchange = applyFilters);
 document.getElementById("clearBtn").onclick = clearFilters;
 document.getElementById("addVideoBtn").onclick = addVideo;
@@ -167,12 +185,16 @@ function restoreFromURL() {
 // ---------------- Public video submission ----------------
 async function addVideo() {
   try {
+    if(!newTitle.value || !newUrl.value) {
+      return alert("Title and URL are required");
+    }
+
     const submission = {
       title: newTitle.value,
       url: newUrl.value,
       thumbnail: newThumbnail.value,
-      date: newDate.value,
-      tags: JSON.parse(newTags.value)
+      date: newDate.value || new Date().toISOString().slice(0,10),
+      tags: newTags.value ? JSON.parse(newTags.value) : {}
     };
 
     const { error } = await supabase.from("submissions").insert(submission);
@@ -193,17 +215,23 @@ async function addVideo() {
 
 // ---------------- Admin login & panel ----------------
 async function login() {
-  const { error } = await supabase.auth.signInWithPassword({
-    email: adminEmail.value,
-    password: adminPassword.value
-  });
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: adminEmail.value,
+      password: adminPassword.value
+    });
 
-  if (error) return alert("Login failed");
-  adminLogin.style.display = "none";
-  adminPanel.style.display = "block";
-  loadSubmissions();
+    if (error) throw error;
+    adminLogin.style.display = "none";
+    adminPanel.style.display = "block";
+    loadSubmissions();
+  } catch (err) {
+    console.error(err);
+    alert("Login failed: " + err.message);
+  }
 }
 
+// Keep admin logged in if session exists
 supabase.auth.onAuthStateChange((event, session)=>{
   if(session){
     adminLogin.style.display="none";
@@ -212,9 +240,10 @@ supabase.auth.onAuthStateChange((event, session)=>{
   }
 });
 
+// Load pending submissions
 async function loadSubmissions() {
   const { data, error } = await supabase.from("submissions").select("*").order("submitted_at",{ascending:false});
-  if(error) return alert("Cannot load submissions");
+  if(error) return console.error("Cannot load submissions:", error);
   submission_list.innerHTML = "";
   data.forEach(s=>{
     const div=document.createElement("div");
@@ -229,26 +258,38 @@ async function loadSubmissions() {
   });
 }
 
+// Approve submission → move to videos
 async function approveSubmission(id){
-  const { data, error } = await supabase.from("submissions").select("*").eq("id",id).single();
-  if(error) return alert("Error loading submission");
+  try {
+    const { data, error } = await supabase.from("submissions").select("*").eq("id",id).single();
+    if(error) throw error;
 
-  await supabase.from("videos").insert({
-    title: data.title,
-    url: data.url,
-    thumbnail: data.thumbnail,
-    date: data.date,
-    tags: data.tags
-  });
+    await supabase.from("videos").insert({
+      title: data.title,
+      url: data.url,
+      thumbnail: data.thumbnail,
+      date: data.date,
+      tags: data.tags
+    });
 
-  await supabase.from("submissions").delete().eq("id",id);
-  loadSubmissions();
-  loadVideos();
+    await supabase.from("submissions").delete().eq("id",id);
+    loadSubmissions();
+    loadVideos();
+  } catch(err) {
+    console.error(err);
+    alert("Error approving submission");
+  }
 }
 
+// Reject submission → delete
 async function rejectSubmission(id){
-  await supabase.from("submissions").delete().eq("id",id);
-  loadSubmissions();
+  try {
+    await supabase.from("submissions").delete().eq("id",id);
+    loadSubmissions();
+  } catch(err) {
+    console.error(err);
+    alert("Error rejecting submission");
+  }
 }
 
 // ---------------- Load videos initially ----------------
