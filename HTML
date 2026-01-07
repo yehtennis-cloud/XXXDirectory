@@ -1,0 +1,35 @@
+<!-- Search / Filters -->
+<input id="searchInput" placeholder="Search videos">
+<select id="sortSelect">
+  <option value="newest">Newest</option>
+  <option value="alphabetical">Alphabetical</option>
+</select>
+<input type="radio" name="mode" value="AND" checked> AND
+<input type="radio" name="mode" value="OR"> OR
+<button id="clearBtn">Clear Filters</button>
+
+<div id="tag-container"></div>
+
+<!-- Video display -->
+<div id="video-container"></div>
+<div id="pagination"></div>
+
+<!-- Submission form -->
+<input id="newTitle" placeholder="Video title">
+<input id="newUrl" placeholder="Video URL">
+<input id="newThumbnail" placeholder="Thumbnail URL">
+<input id="newDate" type="date">
+<textarea id="newTags" placeholder='Tags JSON e.g. {"category":["tag1","tag2"]}'></textarea>
+<button id="addVideoBtn">Add Video</button>
+
+<!-- Admin login -->
+<div id="admin-login">
+  <input id="adminEmail" placeholder="Admin Email">
+  <input id="adminPassword" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- Admin panel -->
+<div id="admin-panel" style="display:none">
+  <div id="submission-list"></div>
+</div>
