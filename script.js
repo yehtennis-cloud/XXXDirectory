@@ -179,31 +179,37 @@ function restoreFromURL() {
 
 async function addVideo() {
   try {
+    // Collect form values
     const submission = {
       title: newTitle.value,
       url: newUrl.value,
       thumbnail: newThumbnail.value,
       date: newDate.value,
-      tags: JSON.parse(newTags.value)
+      tags: JSON.parse(newTags.value) // tags must be valid JSON
     };
 
-    const { error } = await supabase
+    // Insert into Supabase submissions table
+    const { data, error } = await supabase
       .from("submissions")
       .insert(submission);
 
     if (error) throw error;
 
-    alert("Submission received and awaiting approval.");
+    // Clear form fields
     newTitle.value = "";
     newUrl.value = "";
     newThumbnail.value = "";
     newDate.value = "";
     newTags.value = "";
 
-  } catch {
-    alert("Invalid data or JSON");
+    alert("Submission received! Awaiting admin approval.");
+
+  } catch (err) {
+    console.error(err);
+    alert("Error: Could not submit. Check your tag JSON.");
   }
 }
+
 async function login() {
   const { error } = await supabase.auth.signInWithPassword({
     email: adminEmail.value,
