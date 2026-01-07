@@ -200,13 +200,14 @@ async function addVideo() {
     const { error } = await supabase.from("submissions").insert(submission);
     if (error) throw error;
 
+    // Clear form
     newTitle.value = "";
     newUrl.value = "";
     newThumbnail.value = "";
     newDate.value = "";
     newTags.value = "";
 
-    alert("Submission received! Awaiting admin approval.");
+    alert("Submission received! Awaiting admin approval. Email alert will be sent automatically.");
   } catch (err) {
     console.error(err);
     alert("Error: Could not submit. Check your tag JSON.");
