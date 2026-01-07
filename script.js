@@ -3,6 +3,11 @@ const supabase = Supabase.createClient(
   "https://vrzpvslxmjzzqsfqqfqh.supabase.co",
   "sb_publishable_VndS3-F7PgktYmmYjbgfSQ_xHhr4oMx"
 );
+<!-- Supabase JS library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.9.0/dist/supabase.min.js"></script>
+
+<!-- Your script -->
+<script src="script.js"></script>
 
 
 // ---------------- Element References ----------------
