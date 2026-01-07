@@ -1,8 +1,9 @@
 // ---------------- Supabase Init ----------------
-const supabase = supabaseJs.createClient(
+const supabase = Supabase.createClient(
   "https://vrzpvslxmjzzqsfqqfqh.supabase.co",
   "sb_publishable_VndS3-F7PgktYmmYjbgfSQ_xHhr4oMx"
 );
+
 
 // ---------------- Element References ----------------
 const video_container = document.getElementById("video-container");
