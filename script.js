@@ -204,3 +204,77 @@ async function addVideo() {
     alert("Invalid data or JSON");
   }
 }
+async function login() {
+  const { error } = await supabase.auth.signInWithPassword({
+    email: adminEmail.value,
+    password: adminPassword.value
+  });
+
+  if (error) {
+    alert("Login failed");
+  } else {
+    adminLogin.style.display = "none";
+    adminPanel.style.display = "block";
+    loadSubmissions();
+  }
+}
+
+async function loadSubmissions() {
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("*")
+    .order("submitted_at", { ascending: false });
+
+  if (error) {
+    alert("Cannot load submissions");
+    return;
+  }
+
+  submission_list.innerHTML = "";
+
+  data.forEach(s => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <strong>${s.title}</strong><br>
+      <a href="${s.url}" target="_blank">Preview</a><br>
+      <button onclick="approveSubmission('${s.id}')">Approve</button>
+      <button onclick="rejectSubmission('${s.id}')">Reject</button>
+      <hr>
+    `;
+    submission_list.appendChild(div);
+  });
+}
+async function approveSubmission(id) {
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) return alert("Error loading submission");
+
+  await supabase.from("videos").insert({
+    title: data.title,
+    url: data.url,
+    thumbnail: data.thumbnail,
+    date: data.date,
+    tags: data.tags
+  });
+
+  await supabase.from("submissions").delete().eq("id", id);
+
+  loadSubmissions();
+  loadVideos();
+}
+
+async function rejectSubmission(id) {
+  await supabase.from("submissions").delete().eq("id", id);
+  loadSubmissions();
+}
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    adminLogin.style.display = "none";
+    adminPanel.style.display = "block";
+    loadSubmissions();
+  }
+});
