@@ -2,64 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Video Library</title>
-  <style>
-    body { font-family: Arial, sans-serif; }
-    .video { margin-bottom: 20px; }
-    .tag { display:inline-block; padding:5px; margin:2px; background:#e0e0e0; cursor:pointer; }
-    .tag.selected { background:#a0a0a0; }
-    #admin-panel { border: 1px solid #ccc; padding: 10px; margin-top:20px; }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css">
+  <!-- Make sure supabase-js is included -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.9.0/dist/supabase.min.js"></script>
 </head>
 <body>
 
-<h1>Video Library</h1>
+  <h1>Video Library</h1>
 
-<!-- Search / Filter -->
-<input type="text" id="searchInput" placeholder="Search videos...">
-<select id="sortSelect">
-  <option value="newest">Newest</option>
-  <option value="alphabetical">Alphabetical</option>
-</select>
-<label><input type="radio" name="mode" value="AND" checked> AND</label>
-<label><input type="radio" name="mode" value="OR"> OR</label>
-<button id="clearBtn">Clear Filters</button>
-<hr>
+  <!-- ---------- Search & Filters ---------- -->
+  <div id="filters">
+    <input id="searchInput" placeholder="Search videos">
 
-<div id="tag-container"></div>
-<hr>
-<div id="video-container"></div>
-<div id="pagination"></div>
-<hr>
+    <select id="sortSelect">
+      <option value="newest">Newest</option>
+      <option value="alphabetical">Alphabetical</option>
+    </select>
 
-<!-- Public submission form -->
-<h2>Submit a Video for Review</h2>
-<div id="add-video-form">
-  <input id="newTitle" placeholder="Title"><br>
-  <input id="newUrl" placeholder="Video URL"><br>
-  <input id="newThumbnail" placeholder="Thumbnail URL"><br>
-  <input id="newDate" placeholder="YYYY-MM-DD"><br>
-  <textarea id="newTags" placeholder='Tags JSON e.g. {"topic":["cardiology"],"level":["beginner"]}'></textarea><br>
-  <button id="addVideoBtn">Add Video</button>
-</div>
+    <label>
+      <input type="radio" name="mode" value="AND" checked> AND
+    </label>
+    <label>
+      <input type="radio" name="mode" value="OR"> OR
+    </label>
 
-<hr>
+    <button id="clearBtn">Clear Filters</button>
+  </div>
 
-<!-- Admin login -->
-<div id="admin-login">
-  <h2>Admin Login</h2>
-  <input id="adminEmail" placeholder="Email"><br>
-  <input id="adminPassword" type="password" placeholder="Password"><br>
-  <button onclick="login()">Login</button>
-</div>
+  <!-- Tag container -->
+  <div id="tag-container"></div>
 
-<!-- Admin panel -->
-<div id="admin-panel" style="display:none;">
-  <h2>Pending Submissions</h2>
-  <div id="submission-list"></div>
-</div>
+  <!-- ---------- Video display ---------- -->
+  <div id="video-container"></div>
+  <div id="pagination"></div>
 
-<script src="script.js"></script>
+  <hr>
+
+  <!-- ---------- Public Submission Form ---------- -->
+  <h2>Submit a New Video</h2>
+  <div id="submission-form">
+    <input id="newTitle" placeholder="Video title">
+    <input id="newUrl" placeholder="Video URL">
+    <input id="newThumbnail" placeholder="Thumbnail URL">
+    <input id="newDate" type="date">
+    <textarea id="newTags" placeholder='Tags JSON, e.g. {"Category":["tag1","tag2"]}'></textarea>
+    <button id="addVideoBtn">Add Video</button>
+  </div>
+
+  <hr>
+
+  <!-- ---------- Admin Login ---------- -->
+  <div id="admin-login">
+    <h2>Admin Login</h2>
+    <input id="adminEmail" placeholder="Admin Email">
+    <input id="adminPassword" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- ---------- Admin Panel ---------- -->
+  <div id="admin-panel" style="display:none">
+    <h2>Pending Submissions</h2>
+    <div id="submission-list"></div>
+  </div>
+
+  <!-- ---------- Script ---------- -->
+  <script src="script.js"></script>
+
 </body>
 </html>
