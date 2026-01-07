@@ -9,19 +9,17 @@
 
 <h1>Video Library</h1>
 
-<input type="text" id="searchInput" placeholder="Search videos..." />
+<input type="text" id="searchInput" placeholder="Search videos...">
 
 <select id="sortSelect">
   <option value="newest">Newest</option>
   <option value="alphabetical">Alphabetical</option>
 </select>
 
-<label>
-  <input type="radio" name="mode" value="AND" checked> AND
-</label>
-<label>
-  <input type="radio" name="mode" value="OR"> OR
-</label>
+<label><input type="radio" name="mode" value="AND" checked> AND</label>
+<label><input type="radio" name="mode" value="OR"> OR</label>
+
+<button id="clearBtn">Clear Filters</button>
 
 <hr>
 
@@ -31,7 +29,20 @@
 
 <div id="video-container"></div>
 
+<div id="pagination"></div>
+
+<hr>
+
+<h2>Add New Video (local)</h2>
+<input id="newTitle" placeholder="Title"><br>
+<input id="newUrl" placeholder="Video URL"><br>
+<input id="newThumbnail" placeholder="Thumbnail URL"><br>
+<input id="newDate" placeholder="YYYY-MM-DD"><br>
+<textarea id="newTags" placeholder='Tags JSON (see example)'></textarea><br>
+<button id="addVideoBtn">Add Video</button>
+
 <script src="script.js"></script>
 </body>
+
 
 </html>
