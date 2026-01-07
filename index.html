@@ -1,74 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
   <title>Video Library</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Make sure supabase-js is included -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.9.0/dist/supabase.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" />
+
+  <!-- Supabase JS v2 (global = supabase) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-  <h1>Video Library</h1>
+<h1>Video Library</h1>
 
-  <!-- ---------- Search & Filters ---------- -->
-  <div id="filters">
-    <input id="searchInput" placeholder="Search videos">
+<!-- ================= Filters ================= -->
+<div>
+  <input id="searchInput" placeholder="Search videos" />
 
-    <select id="sortSelect">
-      <option value="newest">Newest</option>
-      <option value="alphabetical">Alphabetical</option>
-    </select>
+  <select id="sortSelect">
+    <option value="newest">Newest</option>
+    <option value="alphabetical">Alphabetical</option>
+  </select>
 
-    <label>
-      <input type="radio" name="mode" value="AND" checked> AND
-    </label>
-    <label>
-      <input type="radio" name="mode" value="OR"> OR
-    </label>
+  <label>
+    <input type="radio" name="mode" value="AND" checked /> AND
+  </label>
+  <label>
+    <input type="radio" name="mode" value="OR" /> OR
+  </label>
 
-    <button id="clearBtn">Clear Filters</button>
-  </div>
+  <button id="clearBtn">Clear</button>
+</div>
 
-  <!-- Tag container -->
-  <div id="tag-container"></div>
+<div id="tag-container"></div>
 
-  <!-- ---------- Video display ---------- -->
-  <div id="video-container"></div>
-  <div id="pagination"></div>
+<!-- ================= Videos ================= -->
+<div id="video-container"></div>
+<div id="pagination"></div>
 
-  <hr>
+<hr />
 
-  <!-- ---------- Public Submission Form ---------- -->
-  <h2>Submit a New Video</h2>
-  <div id="submission-form">
-    <input id="newTitle" placeholder="Video title">
-    <input id="newUrl" placeholder="Video URL">
-    <input id="newThumbnail" placeholder="Thumbnail URL">
-    <input id="newDate" type="date">
-    <textarea id="newTags" placeholder='Tags JSON, e.g. {"Category":["tag1","tag2"]}'></textarea>
-    <button id="addVideoBtn">Add Video</button>
-  </div>
+<!-- ================= Public Submission ================= -->
+<h2>Submit a Video</h2>
 
-  <hr>
+<input id="newTitle" placeholder="Title" />
+<input id="newUrl" placeholder="Video URL" />
+<input id="newThumbnail" placeholder="Thumbnail URL" />
+<input id="newDate" type="date" />
+<textarea
+  id="newTags"
+  placeholder='{"Category":["tag1","tag2"]}'
+></textarea>
 
-  <!-- ---------- Admin Login ---------- -->
-  <div id="admin-login">
-    <h2>Admin Login</h2>
-    <input id="adminEmail" placeholder="Admin Email">
-    <input id="adminPassword" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-  </div>
+<button id="addVideoBtn">Add Video</button>
 
-  <!-- ---------- Admin Panel ---------- -->
-  <div id="admin-panel" style="display:none">
-    <h2>Pending Submissions</h2>
-    <div id="submission-list"></div>
-  </div>
+<hr />
 
-  <!-- ---------- Script ---------- -->
-  <script src="script.js"></script>
+<!-- ================= Admin ================= -->
+<div id="admin-login">
+  <h2>Admin Login</h2>
+  <input id="adminEmail" placeholder="Email" />
+  <input id="adminPassword" type="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="admin-panel" style="display:none">
+  <h2>Pending Submissions</h2>
+  <div id="submission-list"></div>
+</div>
+
+<!-- IMPORTANT: script.js MUST be last -->
+<script src="script.js"></script>
 
 </body>
 </html>
