@@ -1,96 +1,180 @@
 let allVideos = [];
-let selectedTags = new Set();
+let selectedTags = {};
+let currentPage = 1;
+const pageSize = 5;
 
 fetch("videos.json")
-  .then(response => response.json())
+  .then(r => r.json())
   .then(data => {
     allVideos = data;
+    restoreFromURL();
     renderTags();
     applyFilters();
   });
 
-document.getElementById("searchInput").addEventListener("input", applyFilters);
-document.getElementById("sortSelect").addEventListener("change", applyFilters);
-document.querySelectorAll("input[name='mode']").forEach(r =>
-  r.addEventListener("change", applyFilters)
-);
+document.getElementById("searchInput").oninput = applyFilters;
+document.getElementById("sortSelect").onchange = applyFilters;
+document.getElementsByName("mode").forEach(r => r.onchange = applyFilters);
+document.getElementById("clearBtn").onclick = clearFilters;
+document.getElementById("addVideoBtn").onclick = addVideo;
 
 function renderTags() {
-  const tagContainer = document.getElementById("tag-container");
-  tagContainer.innerHTML = "";
+  const container = document.getElementById("tag-container");
+  container.innerHTML = "";
 
-  const tags = new Set();
-  allVideos.forEach(v => v.tags.forEach(t => tags.add(t)));
+  const categories = {};
 
-  tags.forEach(tag => {
-    const span = document.createElement("span");
-    span.className = "tag";
-    span.innerText = tag;
-    span.onclick = () => toggleTag(tag, span);
-    tagContainer.appendChild(span);
+  allVideos.forEach(v => {
+    for (const cat in v.tags) {
+      categories[cat] ??= new Set();
+      v.tags[cat].forEach(t => categories[cat].add(t));
+    }
   });
+
+  for (const cat in categories) {
+    const h = document.createElement("h3");
+    h.innerText = cat;
+    container.appendChild(h);
+
+    categories[cat].forEach(tag => {
+      const span = document.createElement("span");
+      span.className = "tag";
+      span.innerText = tag;
+      span.onclick = () => toggleTag(cat, tag, span);
+      container.appendChild(span);
+    });
+  }
 }
 
-function toggleTag(tag, element) {
-  if (selectedTags.has(tag)) {
-    selectedTags.delete(tag);
-    element.style.backgroundColor = "#e0e0e0";
+function toggleTag(category, tag, el) {
+  selectedTags[category] ??= new Set();
+
+  if (selectedTags[category].has(tag)) {
+    selectedTags[category].delete(tag);
+    el.style.backgroundColor = "#e0e0e0";
   } else {
-    selectedTags.add(tag);
-    element.style.backgroundColor = "#a0a0a0";
+    selectedTags[category].add(tag);
+    el.style.backgroundColor = "#a0a0a0";
   }
+  currentPage = 1;
   applyFilters();
 }
 
 function applyFilters() {
-  let filtered = [...allVideos];
+  let results = [...allVideos];
 
-  // SEARCH
-  const query = document.getElementById("searchInput").value.toLowerCase();
+  const query = searchInput.value.toLowerCase();
   if (query) {
-    filtered = filtered.filter(v =>
-      v.title.toLowerCase().includes(query) ||
-      v.tags.some(t => t.toLowerCase().includes(query))
+    results = results.filter(v =>
+      v.title.toLowerCase().includes(query)
     );
   }
 
-  // TAG FILTERING
   const mode = document.querySelector("input[name='mode']:checked").value;
-  if (selectedTags.size > 0) {
-    filtered = filtered.filter(v => {
-      if (mode === "AND") {
-        return [...selectedTags].every(t => v.tags.includes(t));
-      } else {
-        return [...selectedTags].some(t => v.tags.includes(t));
-      }
+  for (const cat in selectedTags) {
+    const tags = [...selectedTags[cat]];
+    if (tags.length === 0) continue;
+
+    results = results.filter(v => {
+      const videoTags = v.tags[cat] || [];
+      return mode === "AND"
+        ? tags.every(t => videoTags.includes(t))
+        : tags.some(t => videoTags.includes(t));
     });
   }
 
-  // SORTING
-  const sort = document.getElementById("sortSelect").value;
-  if (sort === "alphabetical") {
-    filtered.sort((a, b) => a.title.localeCompare(b.title));
-  } else {
-    filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-  }
+  const sort = sortSelect.value;
+  results.sort(sort === "alphabetical"
+    ? (a, b) => a.title.localeCompare(b.title)
+    : (a, b) => new Date(b.date) - new Date(a.date)
+  );
 
-  renderVideos(filtered);
+  updateURL();
+  renderPaginated(results);
+}
+
+function renderPaginated(videos) {
+  const start = (currentPage - 1) * pageSize;
+  const pageVideos = videos.slice(start, start + pageSize);
+
+  renderVideos(pageVideos);
+  renderPagination(videos.length);
 }
 
 function renderVideos(videos) {
-  const container = document.getElementById("video-container");
-  container.innerHTML = "";
-
+  video_container.innerHTML = "";
   videos.forEach(v => {
     const div = document.createElement("div");
     div.className = "video";
     div.innerHTML = `
       <img src="${v.thumbnail}" width="200"><br>
       <strong>${v.title}</strong><br>
-      <a href="${v.url}" target="_blank">Watch video</a><br>
-      <small>${v.date}</small><br>
-      Tags: ${v.tags.join(", ")}
+      <a href="${v.url}" target="_blank">Watch</a><br>
+      ${v.date}
     `;
-    container.appendChild(div);
+    video_container.appendChild(div);
   });
+}
+
+function renderPagination(total) {
+  pagination.innerHTML = "";
+  const pages = Math.ceil(total / pageSize);
+  for (let i = 1; i <= pages; i++) {
+    const btn = document.createElement("button");
+    btn.innerText = i;
+    btn.onclick = () => {
+      currentPage = i;
+      applyFilters();
+    };
+    pagination.appendChild(btn);
+  }
+}
+
+function clearFilters() {
+  selectedTags = {};
+  searchInput.value = "";
+  currentPage = 1;
+  applyFilters();
+}
+
+function updateURL() {
+  const params = new URLSearchParams();
+  params.set("q", searchInput.value);
+  params.set("page", currentPage);
+
+  for (const cat in selectedTags) {
+    params.set(cat, [...selectedTags[cat]].join(","));
+  }
+
+  history.replaceState(null, "", "?" + params.toString());
+}
+
+function restoreFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  searchInput.value = params.get("q") || "";
+  currentPage = Number(params.get("page")) || 1;
+
+  params.forEach((v, k) => {
+    if (k !== "q" && k !== "page") {
+      selectedTags[k] = new Set(v.split(","));
+    }
+  });
+}
+
+function addVideo() {
+  try {
+    const video = {
+      id: Date.now(),
+      title: newTitle.value,
+      url: newUrl.value,
+      thumbnail: newThumbnail.value,
+      date: newDate.value,
+      tags: JSON.parse(newTags.value)
+    };
+    allVideos.push(video);
+    renderTags();
+    applyFilters();
+  } catch {
+    alert("Invalid tag JSON");
+  }
 }
