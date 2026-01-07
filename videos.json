@@ -5,7 +5,11 @@
     "url": "https://www.youtube.com/watch?v=example1",
     "thumbnail": "https://img.youtube.com/vi/example1/hqdefault.jpg",
     "date": "2024-01-15",
-    "tags": ["cardiology", "physiology", "beginner"]
+    "tags": {
+      "topic": ["cardiology", "physiology"],
+      "level": ["beginner"],
+      "format": ["lecture"]
+    }
   },
   {
     "id": 2,
@@ -13,6 +17,10 @@
     "url": "https://www.youtube.com/watch?v=example2",
     "thumbnail": "https://img.youtube.com/vi/example2/hqdefault.jpg",
     "date": "2024-03-02",
-    "tags": ["cardiology", "ECG", "advanced"]
+    "tags": {
+      "topic": ["cardiology"],
+      "skill": ["ECG"],
+      "level": ["advanced"]
+    }
   }
 ]
